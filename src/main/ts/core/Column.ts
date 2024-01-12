@@ -104,7 +104,7 @@ export default class Column extends BaseElement {
         if (column) {
             const row = column.parentNode;
             this.editor.dom.remove(column);
-            if (row.querySelectorAll('.grid-col').length === 0) {
+            if (row.querySelectorAll('.bs-grid-col').length === 0) {
                 this.editor.dom.remove(row);
             }
         }
@@ -153,6 +153,9 @@ export default class Column extends BaseElement {
                 if (this.preset.isColumn(className)) {
                     removeClass.push(className);
                 }
+                if (this.preset.isArrangement(className)) {
+                    removeClass.push(className);
+                }
             });
             removeClass.forEach((className) => {
                 column.classList.remove(className);
@@ -162,10 +165,12 @@ export default class Column extends BaseElement {
                 if (data.hasOwnProperty(key)) {
                     const element = data[key];
                     const breakpoint = this.preset.breakpoints.find((br) => br.value === key);
+                    const arrangement = this.preset.arrangements.find((ar) => ar.value === key);
                     if (!element) {
                         continue;
                     }
-                    column.classList.add(this.preset.columnClass(breakpoint.preffix, element));
+                    if (breakpoint) column.classList.add(this.preset.columnClass(breakpoint.preffix, element));
+                    if (arrangement) column.classList.add(this.preset.arrangementClass(arrangement.preffix, element))
                 }
             }
         }, {

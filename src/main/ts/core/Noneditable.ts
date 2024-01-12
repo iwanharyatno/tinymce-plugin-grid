@@ -3,9 +3,9 @@ import Settings from './Settings';
 
 export default class Noneditable {
     private classNames = [
-        'grid-container',
-        'grid-row',
-        'grid-col',
+        'bs-grid-container',
+        'bs-grid-row',
+        'bs-grid-col',
     ];
 
     constructor(private settings: Settings, private editor: Editor, private i18n: I18n) {

@@ -17,15 +17,15 @@ export default class BaseElement {
     }
 
     protected getElement() {
-        return this.editor.dom.getParent(this.editor.selection.getStart(), '.grid-container') as Element;
+        return this.editor.dom.getParent(this.editor.selection.getStart(), '.bs-grid-container') as Element;
     }
 
     protected isElement(container: any) {
-        return this.editor.dom.is(container, '.grid-container') && this.editor.getBody().contains(container);
+        return this.editor.dom.is(container, '.bs-grid-container') && this.editor.getBody().contains(container);
     }
 
     protected getElementColumn() {
-        return this.editor.dom.getParent(this.editor.selection.getStart(), '.grid-col') as Element;
+        return this.editor.dom.getParent(this.editor.selection.getStart(), '.bs-grid-col') as Element;
     }
 
     protected isElementColumn(column: any) {
@@ -33,10 +33,10 @@ export default class BaseElement {
             return false;
         }
 
-        const parents = this.editor.dom.getParents(column, '.grid-col');
+        const parents = this.editor.dom.getParents(column, '.bs-grid-col');
 
         for (const parent of parents) {
-            if (parent.classList.contains('grid-col')) {
+            if (parent.classList.contains('bs-grid-col')) {
                 return true;
             }
         }
@@ -45,11 +45,11 @@ export default class BaseElement {
     }
 
     protected getElementRow() {
-        return this.editor.dom.getParent(this.editor.selection.getStart(), '.grid-row') as Element;
+        return this.editor.dom.getParent(this.editor.selection.getStart(), '.bs-grid-row') as Element;
     }
 
     protected isElementRow(row: any) {
-        return this.editor.dom.is(row, '.grid-row') && this.editor.getBody().contains(row);
+        return this.editor.dom.is(row, '.bs-grid-row') && this.editor.getBody().contains(row);
     }
 
     protected selectElement(target: any) {

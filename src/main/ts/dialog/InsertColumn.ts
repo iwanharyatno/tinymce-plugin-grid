@@ -1,5 +1,5 @@
 import { Ui } from 'tinymce';
-import IPreset, { Breakpoint, Column } from '../presets/IPreset';
+import IPreset, { Alignment, Breakpoint, Column } from '../presets/IPreset';
 
 interface Args {
     class?: string,
@@ -13,7 +13,7 @@ export default class InsertColumn {
     public static readonly BTN_SUBMIT = 'btnSubmit';
     public static readonly BTN_CANCEL = 'btnCancel';
 
-    constructor (private preset: IPreset) {}
+    constructor(private preset: IPreset) { }
 
     /**
      * @param {OnSubmit} onSubmit
@@ -45,6 +45,14 @@ export default class InsertColumn {
             }
             result[breadpoint.value] = column;
         });
+        this.preset.arrangements.forEach((arrangement) => {
+            const match = this.preset.arrangementClassRegex(arrangement.preffix).exec(className);
+            let column = '';
+            if (match && match.length > 1) {
+                column = match[1];
+            }
+            result[arrangement.value] = column;
+        });
         return result;
     }
 
@@ -55,6 +63,7 @@ export default class InsertColumn {
         return {
             type: 'panel',
             items: this.preset.breakpoints.map((br) => this.breadpoint(br))
+                .concat(this.preset.arrangements.map((ar) => this.alignment(ar)))
         };
     }
 
@@ -99,13 +108,29 @@ export default class InsertColumn {
      */
     private breadpoint(breadpoint: Breakpoint): Ui.Dialog.ListBoxSpec {
         const columnItems = this.preset.columns.map((column) => this.columnOption(column));
-        columnItems.unshift({text: 'Select column', value: ''});
+        columnItems.unshift({ text: 'Select column', value: '' });
 
         return {
             type: 'listbox',
             name: breadpoint.value,
             label: breadpoint.text,
             items: columnItems
+        };
+    }
+
+    /**
+     * @param {Alignment} alignment
+     * @return {Ui.Dialog.ListBoxSpec}
+     */
+    private alignment(alignment: Alignment): Ui.Dialog.ListBoxSpec {
+        const alignmentItems = this.preset.alignments.map((alignment) => this.alignmentOption(alignment));
+        alignmentItems.unshift({ text: 'Select alignment', value: '' });
+
+        return {
+            type: 'listbox',
+            name: alignment.value,
+            label: alignment.text,
+            items: alignmentItems
         };
     }
 
@@ -117,6 +142,17 @@ export default class InsertColumn {
         return {
             text: column.text,
             value: column.value,
+        }
+    }
+
+    /**
+     * @param {Alignment} alignment
+     * @return {Ui.Dialog.ListBoxItemSpec}
+     */
+    private alignmentOption(alignment: Alignment): Ui.Dialog.ListBoxItemSpec {
+        return {
+            text: alignment.text,
+            value: alignment.value,
         }
     }
 

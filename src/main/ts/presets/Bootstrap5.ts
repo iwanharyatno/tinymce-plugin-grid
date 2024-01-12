@@ -1,6 +1,6 @@
 import { Editor } from 'tinymce';
 import Settings from '../core/Settings';
-import IPreset, { Breakpoint, Column } from './IPreset';
+import IPreset, { Breakpoint, Column, Alignment, Arrangement } from './IPreset';
 
 export default class Bootstrap5 implements IPreset {
 
@@ -20,13 +20,30 @@ export default class Bootstrap5 implements IPreset {
     ];
 
     public readonly breakpoints: Breakpoint[] = [
-        {text: 'Extra small', value: 'extra_small', preffix: 'xs'},
         {text: 'Small', value: 'small', preffix: 'sm'},
         {text: 'Medium', value: 'medium', preffix: 'md'},
         {text: 'Large', value: 'large', preffix: 'lg'},
+        {text: 'Extra large', value: 'extra_large', preffix: 'xl'},
+    ];
+    
+    public readonly arrangements: Arrangement[] = [
+        {text: "Justify Content", value: "justify_content", preffix: "justify-content"},
+        {text: "Align Items", value: "align_items", preffix: "align-items"},
+    ];
+    
+    public readonly alignments: Alignment[] = [
+        {text: "Start", value: "start"},
+        {text: "End", value: "end"},
+        {text: "Center", value: "center"},
+        {text: "Between", value: "between"},
+        {text: "Arround", value: "arround"},
+        {text: "Baseline (Align Items Only)", value: "baseline"},
+        {text: "Stretch  (Align Items Only)", value: "stretch"},
     ];
 
     constructor(protected settings: Settings, protected editor: Editor) {}
+
+    public arrangementClass = (arrangement: string, location: string): string => `bs-${arrangement}-${location}`;
 
     /**
      * Gets style url
@@ -47,7 +64,14 @@ export default class Bootstrap5 implements IPreset {
      * @param {string} columnPreffix
      * @return {RegExp}
      */
-    public columnClassRegex = (columnPreffix: string): RegExp => new RegExp(`col-${columnPreffix}-([\\d]+)`, 'gi');
+    public columnClassRegex = (columnPreffix: string): RegExp => new RegExp(`bs-col-${columnPreffix}-([\\d]+)`, 'gi');
+    /**
+     * Returns regxp for arrangements class
+     *
+     * @param {string} arrangementPrefix
+     * @return {RegExp}
+     */
+    public arrangementClassRegex = (arrangementPrefix: string): RegExp => new RegExp(`bs-${arrangementPrefix}-(.+)`, 'gi');
 
     /**
      * Builds column class based on prefix and breakpoint
@@ -56,7 +80,7 @@ export default class Bootstrap5 implements IPreset {
      * @param {string} column
      * @return {string}
      */
-    public columnClass = (breakpoint: string, column: string): string => `col-${breakpoint}-${column}`;
+    public columnClass = (breakpoint: string, column: string): string => `bs-col-${breakpoint}-${column}`;
 
     /**
      * Check if class is column
@@ -67,15 +91,23 @@ export default class Bootstrap5 implements IPreset {
     public isColumn = (className: string): boolean => !!this.breakpoints.find((breakpoint) => !!this.columns.find((column) => this.columnClass(breakpoint.preffix, column.value) === className));
 
     /**
+     * Check if class is arrangement
+     *
+     * @param {string} className
+     * @return {boolean}
+     */
+    public isArrangement = (className: string): boolean => !!this.arrangements.find((arr) => !!this.alignments.find((alignment) => this.arrangementClass(arr.preffix, alignment.value) === className));
+
+    /**
      * Render container
      *
      * @return {Element}
      */
     public renderContainer(): Element {
         const node = `
-        <div class="grid-container container">
-            <div class="grid-row row">
-                <div class="grid-col col-lg-12"><p>Lorem ipsum</p></div>
+        <div class="bs-grid-container container-fluid">
+            <div class="bs-grid-row bs-row">
+                <div class="bs-grid-col col-lg-12"><div><p><span style="display: none">ga liat</span>Isi disini</p></div></div>
             </div>
         </div>`;
         const div = document.createElement('div');
@@ -91,8 +123,8 @@ export default class Bootstrap5 implements IPreset {
     public renderRow(): Element {
         const div = document.createElement('div');
         div.innerHTML = `
-        <div class="grid-row row">
-            <div class="grid-col col-lg-12"><p>Lorem ipsum</p></div>
+        <div class="bs-grid-row bs-row">
+            <div class="bs-grid-col bs-col-lg-12"><div><p><span style="display: none">ga liat</span>Isi disini</p></div></div>
         </div>`.trim();
         return div.firstChild as Element;
     }
@@ -103,12 +135,15 @@ export default class Bootstrap5 implements IPreset {
      * @return {Element}
      */
     public renderColumn(data): Element {
-        const xs = data.extra_small.length > 0 ? `col-sm-${data.extra_small}` : '';
-        const sm = data.small.length > 0 ? `col-sm-${data.small}` : '';
-        const md = data.medium.length > 0 ? `col-md-${data.medium}` : '';
-        const lg = data.large.length > 0 ? `col-lg-${data.large}` : '';
-        const className = `${xs} ${sm} ${md} ${lg}`;
-        const node = `<div class="grid-col ${className.trim()}"><p>Lorem ipsum</p></div>`;
+        const xs = data.extra_large.length > 0 ? `bs-col-xl-${data.extra_large}` : '';
+        const sm = data.small.length > 0 ? `bs-col-sm-${data.small}` : '';
+        const md = data.medium.length > 0 ? `bs-col-md-${data.medium}` : '';
+        const lg = data.large.length > 0 ? `bs-col-lg-${data.large}` : '';
+        const alignItems = data.align_items.length > 0 ? `bs-align-items-${data.align_items}` : '';
+        const justifyContent = data.justify_content.length > 0 ? `bs-justify-content-${data.align_items}` : '';
+
+        const className = `${xs} ${sm} ${md} ${lg} ${alignItems} ${justifyContent}`;
+        const node = `<div class="bs-grid-col ${className.trim()}"><div><p><span style="display: none">ga liat</span>Isi disini</p></div></div>`;
 
         const div = document.createElement('div');
         div.innerHTML = node.trim();

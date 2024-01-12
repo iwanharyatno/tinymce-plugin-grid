@@ -1,6 +1,6 @@
 import { Editor } from 'tinymce';
 import Settings from '../core/Settings';
-import IPreset, { Breakpoint, Column } from './IPreset';
+import IPreset, { Alignment, Arrangement, Breakpoint, Column } from './IPreset';
 
 export default class Foundation5 implements IPreset {
 
@@ -24,6 +24,23 @@ export default class Foundation5 implements IPreset {
         {text: 'Medium', value: 'medium', preffix: 'medium'},
         {text: 'Large', value: 'large', preffix: 'large'},
     ];
+    
+    public readonly arrangements: Arrangement[] = [
+        {text: "Justify Content", value: "justify_content", preffix: "justify-content"},
+        {text: "Align Items", value: "align_items", preffix: "align-items"},
+    ];
+
+    public arrangementClass = (arrangement: string, location: string): string => `${arrangement}-${location}`;
+    
+    public readonly alignments: Alignment[] = [
+        {text: "Start", value: "start"},
+        {text: "End", value: "end"},
+        {text: "Center", value: "center"},
+        {text: "Between", value: "between"},
+        {text: "Arround", value: "arround"},
+        {text: "Baseline (Align Items Only)", value: "baseline"},
+        {text: "Stretch  (Align Items Only)", value: "stretch"},
+    ];
 
     constructor(protected settings: Settings, protected editor: Editor) {}
 
@@ -42,6 +59,14 @@ export default class Foundation5 implements IPreset {
      * Returns regxp for column class
      */
     public columnClassRegex = (columnPreffix: string): RegExp => new RegExp(`${columnPreffix}-([\\d]+)`, 'gi');
+    
+    /**
+     * Returns regxp for arrangements class
+     *
+     * @param {string} arrangementPrefix
+     * @return {RegExp}
+     */
+    public arrangementClassRegex = (arrangementPrefix: string): RegExp => new RegExp(`bs-${arrangementPrefix}-(.+)`, 'gi');
 
     /**
      * Builds column class based on prefix and breakpoint
@@ -59,6 +84,14 @@ export default class Foundation5 implements IPreset {
      * @return {boolean}
      */
     public isColumn = (className: string): boolean => !!this.breakpoints.find((breakpoint) => !!this.columns.find((column) => this.columnClass(breakpoint.preffix, column.value) === className));
+
+    /**
+     * Check if class is arrangement
+     *
+     * @param {string} className
+     * @return {boolean}
+     */
+    public isArrangement = (className: string): boolean => !!this.arrangements.find((arr) => !!this.alignments.find((alignment) => this.arrangementClass(arr.preffix, alignment.value) === className));
 
     /**
      * Render container
