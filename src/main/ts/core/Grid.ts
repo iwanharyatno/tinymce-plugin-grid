@@ -48,7 +48,7 @@ export default class Grid extends BaseElement {
     private insert(api: Ui.Toolbar.ToolbarButtonInstanceApi): void {
         const element = this.getElement();
         if (!element) {
-            this.editor.execCommand('mceInsertContent', false, this.preset.renderContainer().outerHTML);
+            this.editor.execCommand('mceInsertContent', false, this.preset.renderContainer().outerHTML + "<p>&nbsp;</p>");
         }
     }
 
